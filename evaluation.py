@@ -95,6 +95,6 @@ def cross_validate(get_Etilde, get_performance, D, Pitilde, rank, lam, K=5):
         # Training set: all other folds concatenated
         Dk_ = np.hstack((D[:, :k*fs], D[:, (k+1)*fs:]))
         Pitildek_ = np.hstack((Pitilde[:, :k*fs], Pitilde[:, (k+1)*fs:]))
-        Etilde, _, _, _ = get_Etilde(Dk_, Pitildek_, rank=rank, lam=lam)
+        Etilde, _, _, _, _, _ = get_Etilde(Dk_, Pitildek_, rank=rank, lam=lam)
         perf[k] = get_performance(Etilde, Dk, Pitildek)
     return perf

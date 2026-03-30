@@ -133,12 +133,13 @@ def get_Etilde_ga(D, Pitilde, rank=10, lam=0.1, eps_rel=1e-4, eps_abs=1e-4, use_
     Elow  = B @ C.T        # low-rank component
     Ediag = np.diag(s)     # diagonal component
     Estar = Elow + Ediag   # full elasticity matrix
+    
     return np.hstack((Estar, logdnom.reshape(-1, 1))), Elow, Ediag, Estar, B, C
 
 
 # Alternating Maximization
 
-def get_Etilde_am(D, Pitilde, rank=10, lam=0.1, iter=2):
+def get_Etilde_am(D, Pitilde, rank=10, lam=0.1, eps=1e-4, maxiter=25):
     """Estimate Etilde by alternating maximisation (AM) over B and C (requires MOSEK).
 
     Alternates between two convex sub-problems for `iter` rounds:
@@ -152,7 +153,8 @@ def get_Etilde_am(D, Pitilde, rank=10, lam=0.1, iter=2):
     Pitilde: (n+1, N) augmented log-price-deviation matrix
     rank   : rank r of the low-rank components B and C
     lam    : L2 regularisation weight on B and C
-    iter   : number of alternating rounds
+    eps    : relative tolerance for convergence
+    maxiter: maximum number of alternating rounds
 
     Returns
     -------
@@ -193,11 +195,13 @@ def get_Etilde_am(D, Pitilde, rank=10, lam=0.1, iter=2):
 
     # Run AM
     Cp.value = Cinit
-    for it in range(iter):
+    for _ in range(maxiter):
         prob_over_B.solve(solver=cp.MOSEK)
         Bp.value = B.value
         prob_over_C.solve(solver=cp.MOSEK)
         Cp.value = C.value
+        if abs((prob_over_C.value - prob_over_B.value) / prob_over_B.value) < eps:
+            break
 
     Elow = B.value @ C.value.T
     Ediag = np.diag(s.value)
@@ -210,7 +214,7 @@ def get_Etilde_am(D, Pitilde, rank=10, lam=0.1, iter=2):
 
 # Nonlinear Programming (requires IPOPT via CVXPY)
 
-def get_Etilde_nlp(D, Pitilde, rank=10, lam=0.1):
+def get_Etilde_nlp(D, Pitilde, rank=10, lam=0.1, eps=1e-4):
     """Estimate Etilde by solving the full non-convex problem directly (requires IPOPT).
 
     Formulates the joint optimisation over (B, C, s, logdnom) as a single NLP and
@@ -222,6 +226,7 @@ def get_Etilde_nlp(D, Pitilde, rank=10, lam=0.1):
     Pitilde: (n+1, N) augmented log-price-deviation matrix
     rank   : rank r of the low-rank components B and C
     lam    : L2 regularisation weight on B and C
+    eps    : relative tolerance for convergence
 
     Returns
     -------
@@ -255,7 +260,7 @@ def get_Etilde_nlp(D, Pitilde, rank=10, lam=0.1):
     C.value = Cinit
     s.value = sinit
     logdnom.value = logdnominit.reshape(-1, 1)
-    prob.solve(nlp=True, verbose=False)
+    prob.solve(nlp=True, verbose=False, tol=eps)
     
     Elow = B.value @ C.value.T
     Ediag = np.diag(s.value)

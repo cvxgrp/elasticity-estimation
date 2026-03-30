@@ -84,7 +84,7 @@ if __name__ == '__main__':
     print(f"Best lambda index: {j_star}, lambda = {lam_[j_star]}")
     print(f"Max ll_cv value: {ll_cv[i_star, j_star]}")
     
-    _, _, _, Estar = get_Etilde_ga(D, Pitilde, rank=rank_[i_star], lam=lam_[j_star])
+    _, _, _, Estar, _, _ = get_Etilde_ga(D, Pitilde, rank=rank_[i_star], lam=lam_[j_star])
     
     configure_plt()
     

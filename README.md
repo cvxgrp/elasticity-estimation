@@ -2,7 +2,8 @@
 
 This repository implements a method for estimating the **price elasticity matrix**
 of a set of products from historical price and demand data. For theoretical background,
-please refer to our [manuscript](XXX). If you use this code, please cite
+please refer to our [manuscript](https://stanford.edu/~boyd/papers/elasticity_estimation.html).
+If you use this code, please cite
 ```
 @article{SB26,
     author={Maximilian Schaller and Stephen Boyd},
@@ -74,7 +75,6 @@ optimal_pricing/        Submodule: product-pricing problem (PPP)
 numpy
 pandas          (dff_data.py only)
 cvxpy
+ipopt           (NLP and evaluating via pricing performance only)
 matplotlib
 ```
-
-When evaluating in terms of pricing performance the **IPOPT** solver is required (via CVXPY).

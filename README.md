@@ -64,8 +64,10 @@ python figure7.py   # requires demand.csv and prices.csv
 ```
 estimation.py           Core estimation: gradient ascent (GA), alternating
                         maximization (AM), and nonlinear programming (NLP)
+
 evaluation.py           Log-likelihood, prediction error, pricing performance,
                         and K-fold cross-validation
+
 optimal_pricing/        Submodule: product-pricing problem (PPP)
 ```
 
@@ -73,8 +75,8 @@ optimal_pricing/        Submodule: product-pricing problem (PPP)
 
 ```
 numpy
-pandas          (dff_data.py only)
+pandas          # dff_data.py only
 cvxpy
-ipopt           (figure6.py and when using NLP only)
-matplotlib      (figure4_5.py figure6.py figure7.py only)
+ipopt           # figure6.py and when using NLP only
+matplotlib      # figure4_5.py figure6.py figure7.py only
 ```

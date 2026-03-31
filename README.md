@@ -40,7 +40,7 @@ Provide the following two CSV files directly (no header row, no index column):
 | File | Shape | Description |
 |------|-------|-------------|
 | `demand.csv` | `(times, products)` | Integer unit sales per product per time interval |
-| `prices.csv` | `(times, products)` | Price per unit per product per time interval (positive) |
+| `prices.csv` | `(times, products)` | Price per unit and product per time interval (positive) |
 
 ## Scripts
 

@@ -68,7 +68,8 @@ estimation.py           Core estimation: gradient ascent (GA), alternating
 evaluation.py           Log-likelihood, prediction error, pricing performance,
                         and K-fold cross-validation
 
-optimal_pricing/        Submodule: product-pricing problem (PPP)
+optimal_pricing/        Submodule: product pricing problem (PPP) for pricing
+                        performance
 ```
 
 ## Dependencies

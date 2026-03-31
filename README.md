@@ -76,5 +76,5 @@ numpy
 pandas          (dff_data.py only)
 cvxpy
 ipopt           (NLP and evaluating via pricing performance only)
-matplotlib      (figures4_5.py figure6.py figure7.py only)
+matplotlib      (figure4_5.py figure6.py figure7.py only)
 ```

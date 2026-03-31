@@ -74,7 +74,7 @@ optimal_pricing/        Submodule: product pricing problem (PPP) for pricing
 
 ## Dependencies
 
-```
+```bash
 numpy
 pandas          # dff_data.py only
 cvxpy

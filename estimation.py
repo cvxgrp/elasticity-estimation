@@ -174,24 +174,23 @@ def get_Etilde_am(D, Pitilde, rank=10, lam=0.1, eps=1e-4, maxiter=25):
     B = cp.Variable((n, rank))
     C = cp.Variable((n, rank))
     s = cp.Variable(n)
-    logdnom = cp.Variable((n, 1))
+    Etilde = cp.Variable((n, n + 1))
 
     # Parameters (fixed in each sub-problem)
     Bp = cp.Parameter((n, rank))
     Cp = cp.Parameter((n, rank))
 
-    # Objective: Poisson log-likelihood (scaled) minus L2 regularisation on the    
-    Etilde_over_B = cp.hstack((B @ Cp.T + cp.diag(s), logdnom))
-    Etilde_over_C = cp.hstack((Bp @ C.T + cp.diag(s), logdnom))
+    # Objective, constraints, and subproblems
+    f = cp.sum(cp.multiply(D, Etilde @ Pitilde) - cp.exp(Etilde @ Pitilde)) / N
     
-    f_over_B = cp.sum(cp.multiply(D, Etilde_over_B @ Pitilde) - cp.exp(Etilde_over_B @ Pitilde)) / N
-    f_over_C = cp.sum(cp.multiply(D, Etilde_over_C @ Pitilde) - cp.exp(Etilde_over_C @ Pitilde)) / N
+    obj_over_B = cp.Maximize(f - (lam / 2) * cp.sum_squares(B))
+    obj_over_C = cp.Maximize(f - (lam / 2) * cp.sum_squares(C))
     
-    obj_over_B = cp.Maximize(f_over_B - (lam / 2) * cp.sum_squares(B))
-    obj_over_C = cp.Maximize(f_over_C - (lam / 2) * cp.sum_squares(C))
+    constr_over_B = [Etilde[:, :-1] == B @ Cp.T + cp.diag(s)]
+    constr_over_C = [Etilde[:, :-1] == Bp @ C.T + cp.diag(s)]
 
-    prob_over_B = cp.Problem(obj_over_B)
-    prob_over_C = cp.Problem(obj_over_C)
+    prob_over_B = cp.Problem(obj_over_B, constr_over_B)
+    prob_over_C = cp.Problem(obj_over_C, constr_over_C)
 
     # Run AM
     Cp.value = Cinit
@@ -207,9 +206,7 @@ def get_Etilde_am(D, Pitilde, rank=10, lam=0.1, eps=1e-4, maxiter=25):
     Ediag = np.diag(s.value)
     Estar = Elow + Ediag
     
-    Etilde_sol = np.hstack((Estar, logdnom.value))
-    
-    return Etilde_sol, Elow, Ediag, Estar, B.value, C.value
+    return Etilde.value, Elow, Ediag, Estar, B.value, C.value
 
 
 # Nonlinear Programming (requires IPOPT via CVXPY)
@@ -243,29 +240,25 @@ def get_Etilde_nlp(D, Pitilde, rank=10, lam=0.1, eps=1e-4):
     Binit, Cinit, sinit, logdnominit = init(n, rank)
     
     # Decision variables
-    # Etilde = cp.Variable((n, n + 1))
-    logdnom = cp.Variable((n, 1))
     B = cp.Variable((n, rank))
     C = cp.Variable((n, rank))
     s = cp.Variable(n)
+    Etilde = cp.Variable((n, n + 1))
 
     # Objective and constraint
-    Etilde = cp.hstack((B @ C.T + cp.diag(s), logdnom))
     f = cp.sum(cp.multiply(D, Etilde @ Pitilde) - cp.exp(Etilde @ Pitilde)) / N
     obj = cp.Maximize(f - (lam / 2) * (cp.sum_squares(B) + cp.sum_squares(C)))
 
     # Solve problem
-    prob = cp.Problem(obj)
+    prob = cp.Problem(obj, [Etilde[:, :-1] == B @ C.T + cp.diag(s)])
     B.value = Binit
     C.value = Cinit
     s.value = sinit
-    logdnom.value = logdnominit.reshape(-1, 1)
+    Etilde.value = construct_Etilde(Binit, Cinit, sinit, logdnominit)
     prob.solve(nlp=True, verbose=False, tol=eps)
     
     Elow = B.value @ C.value.T
     Ediag = np.diag(s.value)
     Estar = Elow + Ediag
-    
-    Etilde_sol = np.hstack((Estar, logdnom.value))
 
-    return Etilde_sol, Elow, Ediag, Estar, B.value, C.value
+    return Etilde.value, Elow, Ediag, Estar, B.value, C.value

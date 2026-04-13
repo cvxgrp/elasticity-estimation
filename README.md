@@ -2,13 +2,13 @@
 
 This repository implements a method for estimating the **price elasticity matrix**
 of a set of products from historical price and demand data. For theoretical background,
-please refer to our [manuscript](https://stanford.edu/~boyd/papers/elasticity_estimation.html).
+please refer to our [manuscript](https://stanford.edu/~boyd/papers/price_elasticity.html).
 If you use this code, please cite
 ```
 @article{SB26,
     author={Maximilian Schaller and Stephen Boyd},
     title={Estimating Price Elasticity Matrices},
-    note={Available at \url{https://stanford.edu/~boyd/papers/elasticity_estimation.html}},
+    note={Available at \url{https://stanford.edu/~boyd/papers/price_elasticity.html}},
     year={2026}
 }
 ```

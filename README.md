@@ -8,7 +8,7 @@ If you use this code, please cite
 @article{SB26,
     author={Maximilian Schaller and Stephen Boyd},
     title={Estimating Price Elasticity Matrices},
-    note={Available at \url{https://stanford.edu/~boyd/papers/price_elasticity.html}},
+    journal={arXiv preprint arXiv:2511.06156},
     year={2026}
 }
 ```
